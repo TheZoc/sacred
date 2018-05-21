@@ -1,9 +1,9 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 
 import discord
 import logging
 import logging.handlers
-import bot_config
+import bot_config as config
 
 # Setup logging. Very hackish for now, but I don't want to delay the discord announcement anymore.
 # TODO: Create a class for async log handling
@@ -30,14 +30,14 @@ async def print_role_ids():
 
 async def user_accepted_terms(message):
     """Add the user to the specified role"""
-    if (bot_config.get_welcome_channel_id() == message.channel.id):
+    if (config.welcome_channel_id == message.channel.id):
         logMessage = '[!accept]' + \
             ' User ' + message.author.name + '#' + message.author.discriminator + \
             ' has accepted the terms.'
         logger.info(logMessage)
 
         try:
-            member_role = discord.utils.get(message.server.roles, id=bot_config.get_member_role_id())
+            member_role = discord.utils.get(message.server.roles, id=config.member_role_id)
             await client.add_roles(message.author, member_role)
 
         except discord.Forbidden:
@@ -61,8 +61,8 @@ async def user_accepted_terms(message):
 
 
 async def delete_unwanted_welcome_messages(message):
-    if (bot_config.get_welcome_channel_id() == message.channel.id):
-        if (set([role.id for role in message.author.roles]).isdisjoint(bot_config.roles_allowed_to_msg_welcome_channel())):
+    if (config.welcome_channel_id == message.channel.id):
+        if (set([role.id for role in message.author.roles]).isdisjoint(config.welcome_allowed_roles_msg)):
             try:
                 await client.delete_message(message)
 
@@ -91,5 +91,11 @@ async def on_message(message):
     else:
         await delete_unwanted_welcome_messages(message)
 
+# Check if we have a valid token
+if not config.bot_token:
+    print('The `bot_token` configuration variable is empty.')
+    print('Make sure to configure the bot appropriately prior trying to run it.')
+    quit()
+
 # Run the bot!
-client.run(bot_config.get_bot_token())
+client.run(config.bot_token)

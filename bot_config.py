@@ -1,21 +1,13 @@
 #!/usr/bin/python
 
+# Discord bot token
+bot_token = ''
 
-def get_bot_token():
-    """Returns the assigned bot Token"""
-    return ''
+# #welcome channel ID (Where the bot will look for the !accept command)
+welcome_channel_id = ''
 
+# Member role ID
+member_role_id = ''
 
-def get_welcome_channel_id():
-    """This is the channel the bot will look for !accept command"""
-    return ''
-
-
-def get_member_role_id():
-    """Role to assign to the member who accept the rules described in #welcome channel"""
-    return ''
-
-
-def roles_allowed_to_msg_welcome_channel():
-    """List of roles that are allowed to send messages in #welcome channel"""
-    return {}
+# Roles with permission to send messages in #welcome channel
+welcome_allowed_roles_msg = {}
