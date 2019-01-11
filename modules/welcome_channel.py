@@ -31,7 +31,7 @@ async def user_accepted_terms(client, message):
     # Set the user role. If not possible, log it.
     try:
         member_role = discord.utils.get(message.guild.roles, id=config.member_role_id)
-        await message.author.add_roles(message.author, member_role)
+        await message.author.add_roles(member_role, reason='User accepted terms')
 
     except discord.Forbidden:
         logger.error('[!accept] Insufficient permission to add the specified role to the user.')
