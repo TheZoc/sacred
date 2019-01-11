@@ -18,11 +18,11 @@ client = discord.Client()
 
 # Utility function
 async def print_role_ids():
-    """Utility Function: Print all the roles IDs from all connected servers"""
-    for s in client.servers:
-        print(s)
-        for r in s.roles:
-            print('\t' + r.name + ' = ' + r.id)
+    """Utility Function: Print all the roles IDs from all connected servers (guilds)"""
+    for g in client.guilds:
+        print(g)
+        for r in g.roles:
+            print('\t' + r.name + ' = ' + str(r.id))
 
 
 # Setup on_ready() hook
