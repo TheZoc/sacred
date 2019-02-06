@@ -1,1 +1,2 @@
 -e git://github.com/Rapptz/discord.py.git@7f4c57dd5ad20b7fa10aea485f674a4bc24b9547#egg=discord.py
+aiofiles
