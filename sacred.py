@@ -1,10 +1,8 @@
 #!/usr/local/bin/python3
-import asyncio
-import sys
-import signal
 import discord
 import bot_config as config
-from modules import message_handlers, logger, setupLogger, addSacredHandler
+from modules import message_handlers, logger, setupLogger, addSacredHandler, background_tasks
+import utils
 
 # Setup logger - Part #1
 setupLogger()
@@ -24,21 +22,31 @@ client = discord.Client()
 addSacredHandler(client)
 
 
-# Utility function
-async def print_role_ids():
-    """Utility Function: Print all the roles IDs from all connected servers (guilds)"""
-    for g in client.guilds:
-        print(g)
-        for r in g.roles:
-            print('\t' + r.name + ' = ' + str(r.id))
-
-
 # Setup on_ready() hook
 @client.event
 async def on_ready():
     login_msg = '[Bot Start] - Logged in as {}#{}'.format(client.user.name, client.user.discriminator)
+
+    if config.verbose_start:
+        login_msg += utils.get_all_channels(client)
+        login_msg += utils.get_all_role_ids(client)
+
+        login_msg += 'Registered message handlers:\n'
+        for m in message_handlers:
+            login_msg += '  {}'.format(str(m))
+
+        login_msg += 'Registered background tasks:\n'
+        for b in background_tasks:
+            login_msg += '  {}'.format(str(b))
+
+    # Log what we currently have
     print(login_msg)
     logger.info(login_msg)
+
+    # Init background tasks
+    for b in background_tasks:
+        client.loop.create_task(b(client))
+
     await client.change_presence(activity=discord.Game(name='Haven Alpha'))  # tee-hee
 
 
