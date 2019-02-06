@@ -1,7 +1,8 @@
 #!/usr/local/bin/python3
 import discord
 import bot_config as config
-from modules import message_handlers, logger
+from modules import message_handlers, background_tasks, logger
+import utils
 
 
 # Check if we have a valid token
@@ -16,20 +17,26 @@ if not config.bot_token:
 client = discord.Client()
 
 
-# Utility function
-async def print_role_ids():
-    """Utility Function: Print all the roles IDs from all connected servers (guilds)"""
-    for g in client.guilds:
-        print(g)
-        for r in g.roles:
-            print('\t' + r.name + ' = ' + str(r.id))
-
-
 # Setup on_ready() hook
 @client.event
 async def on_ready():
     print('Logged in as', end=' ')
     print(client.user.name + "#" + client.user.discriminator)
+
+    if config.verbose_start:
+        await utils.print_all_chans(client)
+        print('Roles:')
+        await utils.print_role_ids(client)
+        print('Registered message handlers:')
+        for m in message_handlers:
+            print('  %s' % str(m))
+        print('Registered background tasks:')
+        for b in background_tasks:
+            print('  %s' % str(b))
+
+    for b in background_tasks:
+        client.loop.create_task(b(client))
+    print('\nBot active')
     await client.change_presence(activity=discord.Game(name='Haven Alpha'))  # tee-hee
 
 
@@ -40,6 +47,9 @@ async def on_message(message):
     for handler in message_handlers:
         message_handled = await handler(client, message)
         if message_handled:
+            print('%s | %s: %s' % (message.channel.name, message.author.display_name, message.content))
+            if config.hide_cmds:
+                await message.delete()
             return
 
 
