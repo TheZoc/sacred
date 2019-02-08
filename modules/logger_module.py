@@ -12,9 +12,14 @@ class SacredHandler(logging.Handler):
     def emit(self, record):
         try:
             msg = self.format(record)
-            loop = asyncio.get_running_loop()
-            channel = self.client.get_channel(config.logging_channel)
-            loop.create_task(channel.send(msg))
+
+            # asyncio.get_running_loop() is only available on Python 3.7+
+            # This makes it compatible with older versions of Python
+            loop = self.client.loop
+
+            if loop is not None:
+                channel = self.client.get_channel(config.logging_channel)
+                loop.create_task(channel.send(msg))
         except RuntimeError:
             # This will happen when exting the bot via Ctrl + C
             pass
