@@ -5,7 +5,7 @@ and add the messenger to the pug group.
 
 import discord
 import bot_config as config
-from modules.logger import logger
+from modules import logger
 
 
 async def sfc_pug_handler(client, message):
@@ -65,4 +65,3 @@ async def remove_pugger(client, message):
 
     # Message handled
     return True
-

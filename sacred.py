@@ -1,8 +1,13 @@
 #!/usr/local/bin/python3
+import asyncio
+import sys
+import signal
 import discord
 import bot_config as config
-from modules import message_handlers, logger
+from modules import message_handlers, logger, setupLogger, addSacredHandler
 
+# Setup logger - Part #1
+setupLogger()
 
 # Check if we have a valid token
 if not config.bot_token:
@@ -14,6 +19,9 @@ if not config.bot_token:
 
 # Get Discord Client
 client = discord.Client()
+
+# Setup logger - Part #2
+addSacredHandler(client)
 
 
 # Utility function
@@ -28,8 +36,9 @@ async def print_role_ids():
 # Setup on_ready() hook
 @client.event
 async def on_ready():
-    print('Logged in as', end=' ')
-    print(client.user.name + "#" + client.user.discriminator)
+    login_msg = '[Bot Start] - Logged in as {}#{}'.format(client.user.name, client.user.discriminator)
+    print(login_msg)
+    logger.info(login_msg)
     await client.change_presence(activity=discord.Game(name='Haven Alpha'))  # tee-hee
 
 

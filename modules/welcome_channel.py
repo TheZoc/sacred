@@ -7,7 +7,7 @@ Any other messages typed by non whitelisted users will be deleted by the bot.
 
 import discord
 import bot_config as config
-from modules.logger import logger
+from modules import logger
 
 
 async def welcome_channel_handler(client, message):
