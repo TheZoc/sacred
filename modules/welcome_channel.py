@@ -57,7 +57,7 @@ async def delete_unwanted_welcome_messages(client, message):
     '''Delete every message on #welcome that is not from a whitelisted user'''
 
     # Check to see if the user who sent the message is on the whitelist. If not, delete it.
-    if (set([role.id for role in message.author.roles]).isdisjoint(config.welcome_allowed_roles_msg)):
+    if (set([role.id for role in message.author.roles]).isdisjoint(config.welcome_msg_allowed_roles)):
         try:
             await message.delete()
 
